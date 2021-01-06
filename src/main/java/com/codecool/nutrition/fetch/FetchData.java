@@ -20,13 +20,17 @@ public class FetchData {
     private final String charset = "UTF-8";
     private final String apiKey = getApiKey();
 
-    public String getRecipeById(String id) throws UnsupportedEncodingException, UnirestException {
+    public String getRecipeById(String id) throws UnirestException {
         String host = baseUrl + id;
 
-        String query = String.format(limit,
-            URLEncoder.encode(limit,charset));
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
+            .asJson();
 
-        return getResponse(host,apiKey,query);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(response.getBody().toString());
+
+        return gson.toJson(je);
     }
 
     public String searchForRecipe(String search) throws UnsupportedEncodingException, UnirestException {
