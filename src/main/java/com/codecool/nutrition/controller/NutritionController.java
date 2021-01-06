@@ -22,8 +22,14 @@ public class NutritionController {
 
     @GetMapping("/recipes/{search}")
     public String getRecipeBySearch(@PathVariable("search") String search) throws UnsupportedEncodingException, UnirestException {
-        search = "/complexSearch?query=" + search;
+        search = "complexSearch?query=" + search;
         return fetchData.searchForRecipe(search);
+    }
+
+    @GetMapping("/recipe/{id}")
+    public String getRecipeById(@PathVariable("id") String id) throws UnsupportedEncodingException, UnirestException {
+        id = id + "/information";
+        return fetchData.getRecipeById(id);
     }
 
 }

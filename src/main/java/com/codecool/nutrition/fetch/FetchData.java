@@ -20,6 +20,15 @@ public class FetchData {
     private final String charset = "UTF-8";
     private final String apiKey = getApiKey();
 
+    public String getRecipeById(String id) throws UnsupportedEncodingException, UnirestException {
+        String host = baseUrl + id;
+
+        String query = String.format(limit,
+            URLEncoder.encode(limit,charset));
+
+        return getResponse(host,apiKey,query);
+    }
+
     public String searchForRecipe(String search) throws UnsupportedEncodingException, UnirestException {
         String host = baseUrl + search;
         System.out.println(host);
