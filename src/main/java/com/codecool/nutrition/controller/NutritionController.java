@@ -17,7 +17,7 @@ public class NutritionController {
 
     @GetMapping("/recipes/random")
     public String getRandomRecipes() throws UnsupportedEncodingException, UnirestException {
-        return fetchData.randomRecipesFetch();
+        return fetchData.getRandomRecipes();
     }
 
     @GetMapping("/recipes/{search}")

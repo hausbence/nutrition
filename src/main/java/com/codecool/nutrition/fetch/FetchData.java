@@ -16,55 +16,45 @@ public class FetchData {
     @Value("${recipe.url}")
     private String baseUrl;
 
-    private String limit = "number=10";
-    private final String charset = "UTF-8";
+    private String recipeLimit = "number=10";
     private final String apiKey = getApiKey();
 
-    public String getRecipeById(String id) throws UnsupportedEncodingException, UnirestException {
+    public String getRecipeById(String id) throws UnirestException {
         String host = baseUrl + id;
 
-        String query = String.format(limit,
-            URLEncoder.encode(limit,charset));
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
+            .asJson();
 
-        return getResponse(host,apiKey,query);
+        return getJson(response);
     }
 
     public String searchForRecipe(String search) throws UnsupportedEncodingException, UnirestException {
         String host = baseUrl + search;
         System.out.println(host);
 
-        String query = String.format(limit,
-            URLEncoder.encode(limit,charset));
+        System.out.println(host + "&" + recipeLimit + "&apiKey=" + apiKey);
 
-        System.out.println(host + "&" + query + "&apiKey=" + apiKey);
-
-        return getResponse(host,apiKey, query);
+        return getResponseWithLimit(host,apiKey, recipeLimit);
     }
 
-    public String randomRecipesFetch() throws UnsupportedEncodingException, UnirestException {
-        //https://api.spoonacular.com/recipes/random?number=10
-
-        String host = baseUrl + "/random";
-
-        String query = String.format(limit,
-            URLEncoder.encode(limit,charset));
-
-        HttpResponse<JsonNode> response = Unirest.get(host + "?" + query + "&apiKey=" + apiKey)
-            .asJson();
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(response.getBody().toString());
-
-        return gson.toJson(je);
-    }
-
-    private String getResponse(String host, String apiKey, String query) throws UnirestException {
+    public String getRandomRecipes() throws UnirestException {
+        String host = baseUrl + "random";
         System.out.println(host);
-        System.out.println(query);
-        HttpResponse<JsonNode> response = Unirest.get(host + "&" + query + "&apiKey=" + apiKey)
+
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + recipeLimit + "&apiKey=" + apiKey)
             .asJson();
 
+        return getJson(response);
+    }
+
+    private String getResponseWithLimit(String host, String apiKey, String recipeLimit) throws UnirestException {
+        HttpResponse<JsonNode> response = Unirest.get(host + "&" + recipeLimit + "&apiKey=" + apiKey)
+            .asJson();
+
+        return getJson(response);
+    }
+
+    private String getJson(HttpResponse<JsonNode> response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(response.getBody().toString());
