@@ -12,7 +12,7 @@ export class RecipeService {
 
   constructor(private http:HttpClient) { }
 
-  getRandomRecipes():Observable<Recipe[]> {
+  getRandomRecipes():Observable<any> {
     return this.http.get<Recipe[]>(this.randomRecipesUrl);
   }
 }
