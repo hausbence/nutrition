@@ -1,0 +1,36 @@
+export class Recipe  {
+    instructions:string;
+    sustainable:boolean;
+    analyzedInstructions:any;
+    glutenFree:boolean;
+    veryPopular:boolean;
+    healthScore:number;
+    title:string;
+    diets:any;
+    aggregateLikes:number;
+    creditsText:string;
+    readyInMinutes:number;
+    sourceUrl:string;
+    dairyFree:boolean;
+    servings:number;
+    vegetarian:boolean;
+    id:number;
+    imageType:string;
+    summary:string;
+    image:string;
+    veryHealthy:boolean;
+    vegan:boolean;
+    cheap:boolean;
+    extendedIngredients:any;
+    dishTypes:any;
+    gaps:string;
+    cuisines:any;
+    lowFodmap:boolean;
+    license:string;
+    weightWatcherSmartPoints:number;
+    occasions:any;
+    spoonacularScore:number;
+    pricePerServing:number;
+    sourceName:string;
+    spoonacularSourceUrl:string;
+}
