@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FoodService } from '../../services/food.service'
+
 import { Food } from '../../models/Food';
 
 @Component({
@@ -9,26 +11,10 @@ import { Food } from '../../models/Food';
 export class FoodsComponent implements OnInit {
   foods:Food[];
 
-  constructor() { }
+  constructor(private foodService:FoodService) { }
 
   ngOnInit(): void {
-    this.foods = [
-      {
-        id: 1,
-        name: "palacsinta",
-        calories: 5000,
-      },
-      {
-        id: 2,
-        name: "pörkölt",
-        calories: 50000,
-      },
-      {
-        id: 3,
-        name: "töltött paprika",
-        calories: 1000,
-      },
-    ]
+    this.foodService.getRandomFoods();
   }
 
 }
