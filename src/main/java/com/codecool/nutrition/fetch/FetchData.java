@@ -21,14 +21,10 @@ public class FetchData {
 
     public String getRecipeById(String id) throws UnirestException {
         String host = baseUrl + id;
-
-        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
-            .asJson();
-
-        return getJson(response);
+        return getResponseWithoutLimit(host,apiKey);
     }
 
-    public String searchForRecipe(String search) throws UnsupportedEncodingException, UnirestException {
+    public String searchForRecipe(String search) throws UnirestException {
         String host = baseUrl + search;
         System.out.println(host);
 
@@ -49,6 +45,13 @@ public class FetchData {
 
     private String getResponseWithLimit(String host, String apiKey, String recipeLimit) throws UnirestException {
         HttpResponse<JsonNode> response = Unirest.get(host + "&" + recipeLimit + "&apiKey=" + apiKey)
+            .asJson();
+
+        return getJson(response);
+    }
+
+    private String getResponseWithoutLimit(String host, String apiKey) throws UnirestException {
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
             .asJson();
 
         return getJson(response);

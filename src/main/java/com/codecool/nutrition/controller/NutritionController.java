@@ -27,7 +27,7 @@ public class NutritionController {
     }
 
     @GetMapping("/recipe/{id}")
-    public String getRecipeById(@PathVariable("id") String id) throws UnsupportedEncodingException, UnirestException {
+    public String getRecipeById(@PathVariable("id") String id) throws UnirestException {
         id = id + "/information";
         return fetchData.getRecipeById(id);
     }
