@@ -1,4 +1,4 @@
-package com.codecool.nutrition.payLoad.request;
+package com.codecool.nutrition.request;
 
 import lombok.Data;
 
@@ -6,11 +6,9 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class LoginRequest {
-
     @NotBlank
     private String username;
 
     @NotBlank
     private String password;
-
 }

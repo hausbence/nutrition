@@ -1,4 +1,4 @@
-package com.codecool.nutrition.payLoad.response;
+package com.codecool.nutrition.response;
 
 import java.util.List;
 
