@@ -16,12 +16,12 @@ public class NutritionController {
     FetchData fetchData;
 
     @GetMapping("/recipes/random")
-    public String getRandomRecipes() throws UnsupportedEncodingException, UnirestException {
+    public String getRandomRecipes() throws UnirestException {
         return fetchData.getRandomRecipes();
     }
 
     @GetMapping("/recipes/{search}")
-    public String getRecipeBySearch(@PathVariable("search") String search) throws UnsupportedEncodingException, UnirestException {
+    public String getRecipeBySearch(@PathVariable("search") String search) throws UnirestException {
         search = "complexSearch?query=" + search;
         return fetchData.searchForRecipe(search);
     }
