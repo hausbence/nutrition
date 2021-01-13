@@ -1,6 +1,8 @@
 package com.codecool.nutrition.fetch;
 
 import com.codecool.nutrition.model.User;
+//import com.codecool.nutrition.repository.PlannerRepository;
+import com.codecool.nutrition.repository.RoleRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.google.gson.*;
 import com.mashape.unirest.http.HttpResponse;
@@ -12,50 +14,72 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Optional;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class PlannerFetch {
 
     @Autowired
     UserRepository userRepository;
 
+//    @Autowired
+//    PlannerRepository plannerRepository;
+
     @Value("${plannerconnect.url}")
     private String connectUrl;
 
     private final String apiKey = getApiKey();
 
-    public String connectToPlanner(String plannerUsername) throws UnirestException {
+    public ArrayList<String> getPlannerApiCredentials(String username) throws UnirestException {
+        //Set for storing username & hash from plannerAPI
+        ArrayList<String> plannerCredentials = new ArrayList<>();
+
+        //Initializing variables for connecting a User to plannerAPI
+        String plannerApiName = "";
+        String plannerApiNameHash = "";
+
         String host = connectUrl;
-        Optional<User> userObject = userRepository.findByName(plannerUsername);
-        String plannerName = userObject.get().getPlannerUsername();
-        System.out.println(userObject.toString());
 
+        //Creating a temporary User object to work with
+        User userObject = userRepository.findByName(username);
+
+        //Checking that the user has no planner connected to his account yet
+        String plannerName = userObject.getPlannerUsername();
         if (plannerName == null) {
+            //Creating a jsonObject for HttpRequest body
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("username", plannerUsername);
-
-            userObject.get().setMealPlanner(Boolean.TRUE);
+            jsonObject.put("username", username);
 
             HttpResponse<JsonNode> response = Unirest.post(host + "?apiKey=" + apiKey)
                 .body(jsonObject)
                 .asJson();
 
-            String responseData =  getJson(response);
-
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            //Saving the response in a JSONObject
             JsonParser jp = new JsonParser();
             JsonElement je = jp.parse(response.getBody().toString());
-
             JsonObject responseObject = je.getAsJsonObject();
-            //We got the response in json, need to iterate on it, get the username from it, and the hash version also
 
-            System.out.println(responseData);
+            System.out.println(responseObject.toString());
 
-            return "";
+            //Getting the username & hashedUsername from the object given by plannerAPI and saving it
+            Set<Map.Entry<String, JsonElement>> entrySet = responseObject.entrySet();
+            for(Map.Entry<String,JsonElement> entry: entrySet) {
+                if (entry.getKey().equals("username")) {
+                    plannerApiName = String.valueOf(entry.getValue());
+                    System.out.println(plannerApiName);
+                }
+                if (entry.getKey().equals("hash")) {
+                    plannerApiNameHash = String.valueOf(entry.getValue());
+                    System.out.println(plannerApiNameHash);
+                }
+            }
+            plannerCredentials.add(plannerApiName);
+            plannerCredentials.add(plannerApiNameHash);
+
+            return plannerCredentials;
 
         } else {
-            return "This user has already connected a planner to his account.";
+            throw new IllegalArgumentException("This user already has a planner connect to his account.");
         }
     }
 
