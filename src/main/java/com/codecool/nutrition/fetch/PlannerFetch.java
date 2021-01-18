@@ -1,8 +1,9 @@
 package com.codecool.nutrition.fetch;
 
+import com.codecool.nutrition.model.EDietType;
+import com.codecool.nutrition.model.Meal;
 import com.codecool.nutrition.model.User;
 //import com.codecool.nutrition.repository.PlannerRepository;
-import com.codecool.nutrition.repository.RoleRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.google.gson.*;
 import com.mashape.unirest.http.HttpResponse;
@@ -12,9 +13,9 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Array;
+import javax.validation.Valid;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class PlannerFetch {
@@ -27,6 +28,9 @@ public class PlannerFetch {
 
     @Value("${plannerconnect.url}")
     private String connectUrl;
+
+    @Value("${plannerbase.url}")
+    private String basePlannerUrl;
 
     private final String apiKey = getApiKey();
 
@@ -81,6 +85,68 @@ public class PlannerFetch {
         } else {
             throw new IllegalArgumentException("This user already has a planner connect to his account.");
         }
+    }
+
+    public void getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) {
+        System.out.println("========");
+        System.out.println(targetCalories);
+        System.out.println(diet);
+        System.out.println(excludes);
+        System.out.println("========");
+
+        String timeFrame = "week";
+
+        String host = getValidatedPlannerGeneratorUrl(timeFrame, diet, targetCalories, excludes);
+
+        System.out.println("HOST:   "+host);
+
+    }
+
+    public String getValidatedPlannerGeneratorUrl(String timeFrame, String diet, String targetCalories, List<String> excludes) {
+        //TODO!
+        //excludes listát lekezelni
+
+        StringBuilder excludesString = new StringBuilder();
+
+        if (!excludes.isEmpty()) {
+            for (String exclude : excludes) {
+                if (excludes.indexOf(exclude) == excludes.size() - 1) {
+                    excludesString.append(exclude);
+                } else {
+                    excludesString.append(exclude).append(",");
+                }
+            }
+        }
+
+        String url;
+
+        if (!diet.equals("empty") && !targetCalories.equals("empty") && !String.valueOf(excludesString).equals("empty")) {
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey +
+                "&diet=" + diet +
+                "&targetCalories=" + targetCalories +
+                "&excludes=" + excludesString +
+                "&timeFrame=" + timeFrame;
+        }
+        else if (diet.equals("empty") && !targetCalories.equals("empty") && String.valueOf(excludesString).equals("empty")) {
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey + "&targetCalories=" + targetCalories + "&timeFrame=" + timeFrame;
+        }
+        else if (diet.equals("empty") && !targetCalories.equals("empty")) {
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey + "&targetCalories=" + targetCalories + "&timeFrame=" + timeFrame + "&excludes=" + excludesString;
+        }
+        else if (!diet.equals("empty") && !String.valueOf(excludesString).equals("empty")) {
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey + "&diet=" + diet + "&excludes=" + excludesString + "&timeFrame=" + timeFrame;
+        }
+        else if (String.valueOf(excludesString).equals("empty") && !diet.equals("empty") && !targetCalories.equals("empty")){
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey  + "&targetCalories=" + targetCalories + "&diet=" + diet + "&timeFrame=" + timeFrame;
+        }
+        else if (String.valueOf(excludesString).equals("empty") && !diet.equals("empty")) {
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey + "&diet=" + diet;
+        }
+        else {
+            url = basePlannerUrl + "generate" + "?apiKey=" + apiKey + "&excludes=" + excludesString + "&timeFrame=" + timeFrame;
+        }
+
+        return url;
     }
 
     private String getJson(HttpResponse<JsonNode> response) {

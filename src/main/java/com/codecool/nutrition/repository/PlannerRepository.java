@@ -1,10 +1,9 @@
 //package com.codecool.nutrition.repository;
 //
+//import com.codecool.nutrition.model.Meal;
 //import org.springframework.data.jpa.repository.JpaRepository;
 //
-//import java.util.Optional;
-//
-//public interface PlannerRepository extends JpaRepository<MealPlan,Long> {
+//public interface PlannerRepository extends JpaRepository<Meal,Long> {
 //
 //
 //}

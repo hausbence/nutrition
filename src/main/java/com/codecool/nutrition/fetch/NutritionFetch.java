@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-public class FetchData {
+public class NutritionFetch {
     @Value("${recipe.url}")
     private String baseUrl;
 

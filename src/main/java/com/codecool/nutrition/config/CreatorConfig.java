@@ -1,6 +1,6 @@
 package com.codecool.nutrition.config;
 
-import com.codecool.nutrition.fetch.FetchData;
+import com.codecool.nutrition.fetch.NutritionFetch;
 import com.codecool.nutrition.fetch.PlannerFetch;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class CreatorConfig {
 
     @Bean
-    public FetchData FetchDatCreator() {
-        return new FetchData();
+    public NutritionFetch FetchDatCreator() {
+        return new NutritionFetch();
     }
 
     @Bean

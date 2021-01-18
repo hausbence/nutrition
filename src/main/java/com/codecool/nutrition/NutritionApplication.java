@@ -1,6 +1,6 @@
 package com.codecool.nutrition;
 
-import com.codecool.nutrition.fetch.FetchData;
+import com.codecool.nutrition.fetch.NutritionFetch;
 import com.codecool.nutrition.fetch.PlannerFetch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class NutritionApplication {
 
     @Autowired
-    private FetchData fetchDataCreator;
+    private NutritionFetch nutritionFetchCreator;
 
 
     @Autowired
