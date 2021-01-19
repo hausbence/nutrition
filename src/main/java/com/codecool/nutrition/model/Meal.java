@@ -27,8 +27,8 @@ public class Meal {
     @Column(columnDefinition = "text")
     private Integer servings;
 
-    @Column
-    @ElementCollection
-    @Singular
-    List<Nutrient> nutrients = new ArrayList<>();
+//    @Column
+//    @ElementCollection
+//    @Singular
+//    List<Nutrient> nutrients = new ArrayList<>();
 }

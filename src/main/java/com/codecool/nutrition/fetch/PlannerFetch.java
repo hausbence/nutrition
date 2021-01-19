@@ -1,7 +1,5 @@
 package com.codecool.nutrition.fetch;
 
-import com.codecool.nutrition.model.EDietType;
-import com.codecool.nutrition.model.Meal;
 import com.codecool.nutrition.model.User;
 //import com.codecool.nutrition.repository.PlannerRepository;
 import com.codecool.nutrition.repository.UserRepository;
@@ -14,8 +12,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.validation.Valid;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class PlannerFetch {
@@ -87,7 +83,7 @@ public class PlannerFetch {
         }
     }
 
-    public void getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) {
+    public JsonObject getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) throws UnirestException {
         System.out.println("========");
         System.out.println(targetCalories);
         System.out.println(diet);
@@ -100,13 +96,21 @@ public class PlannerFetch {
 
         System.out.println("HOST:   "+host);
 
+        HttpResponse<JsonNode> response = Unirest.get(host)
+            .asJson();
+
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(response.getBody().toString());
+        JsonObject responseObject = je.getAsJsonObject();
+
+        System.out.println("RESPONSE:   " + responseObject);
+
+        return responseObject;
     }
 
     public String getValidatedPlannerGeneratorUrl(String timeFrame, String diet, String targetCalories, List<String> excludes) {
-        //TODO!
-        //excludes listát lekezelni
-
         StringBuilder excludesString = new StringBuilder();
+        String url;
 
         if (!excludes.isEmpty()) {
             for (String exclude : excludes) {
@@ -118,7 +122,6 @@ public class PlannerFetch {
             }
         }
 
-        String url;
 
         if (!diet.equals("empty") && !targetCalories.equals("empty") && !String.valueOf(excludesString).equals("empty")) {
             url = basePlannerUrl + "generate" + "?apiKey=" + apiKey +

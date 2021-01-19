@@ -45,7 +45,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @ElementCollection
-    private Map<String, ArrayList<Meal>> mealPlans = new HashMap<>();
+    private Map<String, ArrayList<Object>> mealPlans = new HashMap<>();
 
     public User(String username, String email, String password) {
         this.name = username;
