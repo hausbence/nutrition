@@ -32,9 +32,4 @@ public class MealEntity {
 
     @Column(columnDefinition = "text")
     private Integer servings;
-
-//    @Column
-//    @ElementCollection
-//    @Singular
-//    List<Nutrient> nutrients = new ArrayList<>();
 }
