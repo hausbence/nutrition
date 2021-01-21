@@ -1,6 +1,6 @@
 package com.codecool.nutrition.fetch;
 
-import com.codecool.nutrition.model.User;
+import com.codecool.nutrition.entity.UserEntity;
 //import com.codecool.nutrition.repository.PlannerRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.google.gson.*;
@@ -41,10 +41,10 @@ public class PlannerFetch {
         String host = connectUrl;
 
         //Creating a temporary User object to work with
-        User userObject = userRepository.findByName(username);
+        UserEntity userEntityObject = userRepository.findByName(username);
 
         //Checking that the user has no planner connected to his account yet
-        String plannerName = userObject.getPlannerUsername();
+        String plannerName = userEntityObject.getPlannerUsername();
         if (plannerName == null) {
             //Creating a jsonObject for HttpRequest body
             JSONObject jsonObject = new JSONObject();

@@ -4,18 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Meal {
+public class Day {
 
-    private Long foodID;
+    private Timestamp timestamp;
 
-    private String foodTitle;
+    private List<Meal> meals;
 
-    private Integer readyInMinutes;
-
-    private String sourceUrl;
-
-    private Integer servings;
+    private Nutrient nutrient;
 }

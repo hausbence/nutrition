@@ -1,5 +1,6 @@
-package com.codecool.nutrition.model;
+package com.codecool.nutrition.entity;
 
+import com.codecool.nutrition.model.ERole;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,7 +8,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "roles")
-public class Role {
+public class RoleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
-package com.codecool.nutrition.model;
+package com.codecool.nutrition.entity;
 
+import com.codecool.nutrition.model.Meal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue
@@ -42,12 +43,15 @@ public class User {
     @JoinTable(name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<RoleEntity> roleEntities = new HashSet<>();
 
-    @ElementCollection
-    private Map<String, ArrayList<Object>> mealPlans = new HashMap<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_dailymeals",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "dailymeals_id"))
+    private List<DailyMealsEntity> dailyMeals = new ArrayList<>();
 
-    public User(String username, String email, String password) {
+    public UserEntity(String username, String email, String password) {
         this.name = username;
         this.email = email;
         this.password = password;
