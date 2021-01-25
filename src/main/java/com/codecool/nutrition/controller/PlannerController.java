@@ -52,7 +52,8 @@ public class PlannerController {
 
     @PostMapping("/planner/plan/save")
     public void saveGeneratedMealPlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest) {
-        UserEntity userEntityObject = userRepository.findByName(weeklyPlanRequest.getUsername());
+        //error kezelés
+        UserEntity userEntityObject = userRepository.findByName(weeklyPlanRequest.getName());
         List<Day> days = weeklyPlanRequest.getDays();
         Date date = new Date();
         List<DailyMealsEntity> dailyMealsEntities = new ArrayList<>();
@@ -65,23 +66,24 @@ public class PlannerController {
             for (Meal meal:day.getMeals()) {
                 MealEntity mealEntity = new MealEntity();
                 mealEntity.setSourceUrl(meal.getSourceUrl());
-                mealEntity.setFoodTitle(meal.getFoodTitle());
+                mealEntity.setTitle(meal.getTitle());
                 mealEntity.setReadyInMinutes(meal.getReadyInMinutes());
-                mealEntity.setFoodID(meal.getFoodID());
+                mealEntity.setId(meal.getId());
                 mealEntity.setServings(meal.getServings());
                 oneDayMealEntities.add(mealEntity);
             }
 
-            nutrientEntity.setProtein(day.getNutrient().getProtein());
-            nutrientEntity.setCalories(day.getNutrient().getCalories());
-            nutrientEntity.setCarbohydrates(day.getNutrient().getCarbohydrates());
-            nutrientEntity.setFat(day.getNutrient().getFat());
+            nutrientEntity.setProtein(day.getNutrients().getProtein());
+            nutrientEntity.setCalories(day.getNutrients().getCalories());
+            nutrientEntity.setCarbohydrates(day.getNutrients().getCarbohydrates());
+            nutrientEntity.setFat(day.getNutrients().getFat());
 
             Timestamp timestamp = new Timestamp(date.getTime());
 
             dailyMealsEntity.setMealEntities(oneDayMealEntities);
             dailyMealsEntity.setTimeStamp(timestamp);
             dailyMealsEntity.setNutrientId(nutrientEntity.getId());
+            dailyMealsEntity.setUserId(userEntityObject.getId());
             dailyMealsEntities.add(dailyMealsEntity);
         }
 

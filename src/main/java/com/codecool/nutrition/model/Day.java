@@ -16,5 +16,5 @@ public class Day {
 
     private List<Meal> meals;
 
-    private Nutrient nutrient;
+    private Nutrient nutrients;
 }

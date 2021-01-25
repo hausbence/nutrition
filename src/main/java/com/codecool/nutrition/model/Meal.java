@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Meal {
 
-    private Long foodID;
+    private Long id;
 
-    private String foodTitle;
+    private String title;
 
     private Integer readyInMinutes;
 

@@ -10,6 +10,6 @@ public class WeeklyPlanRequest {
 
     private List<Day> days;
 
-    private String username;
+    private String name;
 
 }

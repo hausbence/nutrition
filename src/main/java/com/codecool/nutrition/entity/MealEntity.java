@@ -16,13 +16,13 @@ public class MealEntity {
 
     @Id
     @GeneratedValue
-    private Long Id;
+    private Long db_Id;
 
     @Column(columnDefinition = "text")
-    private Long foodID;
+    private Long id;
 
     @Column(columnDefinition = "text")
-    private String foodTitle;
+    private String title;
 
     @Column(columnDefinition = "text")
     private Integer readyInMinutes;
