@@ -3,8 +3,6 @@ package com.codecool.nutrition.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 @Builder
@@ -16,7 +14,7 @@ public class MealEntity {
 
     @Id
     @GeneratedValue
-    private Long db_Id;
+    private Long meal_id;
 
     @Column(columnDefinition = "text")
     private Long id;

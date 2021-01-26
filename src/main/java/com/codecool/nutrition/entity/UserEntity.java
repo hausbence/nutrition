@@ -31,9 +31,6 @@ public class UserEntity {
     private String email;
 
     @Column(columnDefinition = "text")
-    private Boolean mealPlanner = Boolean.FALSE;
-
-    @Column(columnDefinition = "text")
     private String plannerUsername;
 
     @Column(columnDefinition = "text")
