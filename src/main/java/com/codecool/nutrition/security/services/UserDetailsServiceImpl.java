@@ -1,6 +1,6 @@
 package com.codecool.nutrition.security.services;
 
-import com.codecool.nutrition.model.User;
+import com.codecool.nutrition.entity.UserEntity;
 import com.codecool.nutrition.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByName(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: "+ username));
-
-        return UserDetailsImpl.build(user);
+        UserEntity userEntity = userRepository.findByName(username);
+        return UserDetailsImpl.build(userEntity);
     }
 }

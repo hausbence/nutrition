@@ -1,8 +1,8 @@
 package com.codecool.nutrition.controller;
 
+import com.codecool.nutrition.entity.RoleEntity;
+import com.codecool.nutrition.entity.UserEntity;
 import com.codecool.nutrition.model.ERole;
-import com.codecool.nutrition.model.Role;
-import com.codecool.nutrition.model.User;
 import com.codecool.nutrition.repository.RoleRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.codecool.nutrition.request.LoginRequest;
@@ -11,11 +11,8 @@ import com.codecool.nutrition.response.JwtResponse;
 import com.codecool.nutrition.response.MessageResponse;
 import com.codecool.nutrition.security.jwt.JwtUtils;
 import com.codecool.nutrition.security.services.UserDetailsImpl;
-import lombok.Data;
-import org.aspectj.lang.annotation.DeclareWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -84,42 +81,42 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
+        UserEntity userEntity = new UserEntity(signUpRequest.getUsername(),
             signUpRequest.getEmail(),
             encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        Set<RoleEntity> roleEntities = new HashSet<>();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+            RoleEntity userRoleEntity = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
+            roleEntities.add(userRoleEntity);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                        RoleEntity adminRoleEntity = roleRepository.findByName(ERole.ROLE_ADMIN)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
+                        roleEntities.add(adminRoleEntity);
 
                         break;
                     case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+                        RoleEntity modRoleEntity = roleRepository.findByName(ERole.ROLE_MODERATOR)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
+                        roleEntities.add(modRoleEntity);
 
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        RoleEntity userRoleEntity = roleRepository.findByName(ERole.ROLE_USER)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                        roleEntities.add(userRoleEntity);
                 }
             });
         }
 
-        user.setRoles(roles);
-        userRepository.save(user);
+        userEntity.setRoleEntities(roleEntities);
+        userRepository.save(userEntity);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
