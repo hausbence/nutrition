@@ -5,35 +5,44 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 public class NutritionFetch {
     @Value("${recipe.url}")
-    private String baseUrl;
+    private String recipesBaseUrl;
+
+    @Value("${ingredient.url}")
+    private String ingredientsBaseUrl;
 
     private String recipeLimit = "number=10";
     private final String apiKey = getApiKey();
 
     public String getRecipeById(String id) throws UnirestException {
-        String host = baseUrl + id;
-        return getResponseWithoutLimit(host,apiKey);
+        id = id + "/information";
+        String host = recipesBaseUrl + id;
+        return getResponseWithoutLimit(host);
     }
 
     public String searchForRecipe(String search) throws UnirestException {
-        String host = baseUrl + search;
+        search = "complexSearch?query=" + search;
+        String host = recipesBaseUrl + search;
         System.out.println(host);
 
         System.out.println(host + "&" + recipeLimit + "&apiKey=" + apiKey);
 
-        return getResponseWithLimit(host,apiKey, recipeLimit);
+        return getResponseWithLimit(host);
+    }
+
+    public String searchForIngredient(String search) throws UnirestException {
+        search = "search?query=" + search;
+        String host = ingredientsBaseUrl + search;
+        return getResponseWithLimit(host);
     }
 
     public String getRandomRecipes() throws UnirestException {
-        String host = baseUrl + "random";
+        String host = recipesBaseUrl + "random";
         System.out.println(host);
 
         HttpResponse<JsonNode> response = Unirest.get(host + "?" + recipeLimit + "&apiKey=" + apiKey)
@@ -42,14 +51,15 @@ public class NutritionFetch {
         return getJson(response);
     }
 
-    private String getResponseWithLimit(String host, String apiKey, String recipeLimit) throws UnirestException {
+    private String getResponseWithLimit(String host) throws UnirestException {
         HttpResponse<JsonNode> response = Unirest.get(host + "&" + recipeLimit + "&apiKey=" + apiKey)
             .asJson();
 
         return getJson(response);
     }
 
-    private String getResponseWithoutLimit(String host, String apiKey) throws UnirestException {
+    private String getResponseWithoutLimit(String host) throws UnirestException {
+        //!!! Only if there is no request param
         HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
             .asJson();
 
@@ -75,5 +85,4 @@ public class NutritionFetch {
 
         return "";
     }
-
 }
