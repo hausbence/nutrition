@@ -94,7 +94,6 @@ public class PlannerFetch {
 
         String host = getValidatedPlannerGeneratorUrl(timeFrame, diet, targetCalories, excludes);
 
-        System.out.println("HOST:   "+host);
 
         HttpResponse<JsonNode> response = Unirest.get(host)
             .asJson();
@@ -150,14 +149,6 @@ public class PlannerFetch {
         }
 
         return url;
-    }
-
-    private String getJson(HttpResponse<JsonNode> response) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(response.getBody().toString());
-
-        return gson.toJson(je);
     }
 
     private String getApiKey() {

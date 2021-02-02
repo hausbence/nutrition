@@ -24,7 +24,10 @@ public class NutritionFetch {
     public String getRecipeById(String id) throws UnirestException {
         id = id + "/information";
         String host = recipesBaseUrl + id;
-        return getResponseWithoutLimit(host);
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
+            .asJson();
+
+        return getJson(response);
     }
 
     public String searchForRecipe(String search) throws UnirestException {
@@ -40,6 +43,11 @@ public class NutritionFetch {
     public String searchForIngredient(String search) throws UnirestException {
         search = "search?query=" + search;
         String host = ingredientsBaseUrl + search;
+        return getResponseWithLimit(host);
+    }
+
+    public String getIngredientById(String id) throws UnirestException {
+        String host = ingredientsBaseUrl + id + "/information?amount=1";
         return getResponseWithLimit(host);
     }
 
@@ -59,14 +67,6 @@ public class NutritionFetch {
 
     private String getResponseWithLimit(String host) throws UnirestException {
         HttpResponse<JsonNode> response = Unirest.get(host + "&" + recipeLimit + "&apiKey=" + apiKey)
-            .asJson();
-
-        return getJson(response);
-    }
-
-    private String getResponseWithoutLimit(String host) throws UnirestException {
-        //!!! Only if there is no request param
-        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
             .asJson();
 
         return getJson(response);
