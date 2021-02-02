@@ -7,6 +7,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 public class NutritionFetch {
@@ -41,11 +43,15 @@ public class NutritionFetch {
         return getResponseWithLimit(host);
     }
 
-    public String getRandomRecipes() throws UnirestException {
+    public String getRandomRecipes() throws UnirestException, UnsupportedEncodingException {
         String host = recipesBaseUrl + "random";
         System.out.println(host);
+        String charset = "UTF-8";
 
-        HttpResponse<JsonNode> response = Unirest.get(host + "?" + recipeLimit + "&apiKey=" + apiKey)
+        String query = String.format(recipeLimit,
+            URLEncoder.encode(recipeLimit,charset));
+
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + query + "&apiKey=" + apiKey)
             .asJson();
 
         return getJson(response);
