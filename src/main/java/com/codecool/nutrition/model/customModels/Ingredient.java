@@ -1,5 +1,6 @@
-package com.codecool.nutrition.model;
+package com.codecool.nutrition.model.customModels;
 
+import com.codecool.nutrition.model.Nutrient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ingredient {
+
+    private Long id;
 
     private String originalName;
 

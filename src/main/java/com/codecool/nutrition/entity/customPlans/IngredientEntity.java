@@ -1,4 +1,4 @@
-package com.codecool.nutrition.entity;
+package com.codecool.nutrition.entity.customPlans;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
