@@ -78,7 +78,7 @@ public class PlannerController {
         return plannerFetch.getGeneratedMealPlan(targetCalories, diet, excludes);
     }
 
-    @PostMapping("/planner/plan/save")
+    @PostMapping("/planner/plan/generated/save")
     public ResponseEntity<?> saveGeneratedMealPlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest) {
         UserEntity userEntityObject;
 

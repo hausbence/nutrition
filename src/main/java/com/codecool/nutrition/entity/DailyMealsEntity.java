@@ -1,5 +1,6 @@
 package com.codecool.nutrition.entity;
 
+import com.codecool.nutrition.model.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,12 @@ public class DailyMealsEntity {
         joinColumns = @JoinColumn(name = "dailymeals_id"),
         inverseJoinColumns = @JoinColumn(name = "meal_id"))
     private List<MealEntity> mealEntities = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "dailymeals_ingredient",
+        joinColumns = @JoinColumn(name = "dailymeals_id"),
+        inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    private List<IngredientEntity> ingredientEntities = new ArrayList<>();
 
     @Column(name ="nutrient_id")
     private Long nutrientId;
