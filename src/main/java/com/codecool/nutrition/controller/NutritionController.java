@@ -30,6 +30,11 @@ public class NutritionController {
         return nutritionFetch.getRecipeById(id);
     }
 
+    @GetMapping("/recipe/nutrition/{id}")
+    public String getRecipeNutritionById(@PathVariable("id") String id) throws UnirestException {
+        return nutritionFetch.getRecipeNutritionById(id);
+    }
+
     @GetMapping("/ingredients/{search}")
     public String getIngredientBySearch(@PathVariable("search") String search) throws UnirestException {
         return nutritionFetch.searchForIngredient(search);

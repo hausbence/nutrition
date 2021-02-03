@@ -30,6 +30,15 @@ public class NutritionFetch {
         return getJson(response);
     }
 
+    public String getRecipeNutritionById(String id) throws UnirestException {
+        id = id + "/nutritionWidget.json";
+        String host = recipesBaseUrl + id;
+        HttpResponse<JsonNode> response = Unirest.get(host + "?" + "apiKey=" + apiKey)
+            .asJson();
+
+        return getJson(response);
+    }
+
     public String searchForRecipe(String search) throws UnirestException {
         search = "complexSearch?query=" + search;
         String host = recipesBaseUrl + search;
