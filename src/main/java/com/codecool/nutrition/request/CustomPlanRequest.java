@@ -10,6 +10,6 @@ public class CustomPlanRequest {
 
     private List<CustomDay> days;
 
-    private String plannerUserName;
+    private String plannerUsername;
 
 }

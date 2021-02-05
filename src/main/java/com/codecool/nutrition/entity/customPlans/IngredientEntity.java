@@ -23,7 +23,7 @@ public class IngredientEntity {
     private Long id;
 
     @Column(columnDefinition = "text")
-    private String originalName;
+    private String name;
 
     @Column(name ="nutrient_id")
     private Long nutrientId;

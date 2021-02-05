@@ -12,7 +12,7 @@ public class Ingredient {
 
     private Long id;
 
-    private String originalName;
+    private String name;
 
     private Nutrient nutrient;
 
