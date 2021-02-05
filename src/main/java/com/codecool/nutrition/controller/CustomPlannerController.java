@@ -92,7 +92,6 @@ public class CustomPlannerController {
                     ingredientEntity.setName(ingredient.getName());
                     String ingredientNutrient = nutritionController.getIngredientById(String.valueOf(ingredient.getId()));
                     getIngredientNutrientsMap(ingredientNutrient);
-                    //valahogy elkéne tárolni ezt a fost, kirakom külön methodba és ott lehet iterálgatni rajta végső esetben
                     System.out.println("wait");
                 }
                 List<IngredientEntity> oneDayIngredientEntities = new ArrayList<>();
