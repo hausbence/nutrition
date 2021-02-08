@@ -9,9 +9,7 @@ import com.codecool.nutrition.fetch.PlannerFetch;
 import com.codecool.nutrition.model.customModels.CustomDay;
 import com.codecool.nutrition.model.customModels.Ingredient;
 import com.codecool.nutrition.model.customModels.Recipe;
-import com.codecool.nutrition.repository.NutrientEntityRepository;
-import com.codecool.nutrition.repository.RecipeEntityRepository;
-import com.codecool.nutrition.repository.UserRepository;
+import com.codecool.nutrition.repository.*;
 import com.codecool.nutrition.request.CustomPlanRequest;
 import com.codecool.nutrition.response.MessageResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -43,6 +42,12 @@ public class CustomPlannerController {
     @Autowired
     NutrientEntityRepository nutrientEntityRepository;
 
+    @Autowired
+    IngredientEntityRepository ingredientEntityRepository;
+
+    @Autowired
+    CustomDailyMealsEntityRepository customDailyMealsEntityRepository;
+
     @PostMapping("/planner/custom/plan/save")
     public ResponseEntity<?> saveCustomMealPlan(@RequestBody CustomPlanRequest customPlanRequest) throws UnirestException, JsonProcessingException, IllegalAccessException {
         System.out.println(customPlanRequest.getPlannerUsername());
@@ -58,6 +63,7 @@ public class CustomPlannerController {
 
         List<CustomDay> days = customPlanRequest.getDays();
         Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
         List<CustomDailyMealsEntity> customDailyMealsEntities = new ArrayList<>();
 
         for (CustomDay day : days) {
@@ -76,40 +82,46 @@ public class CustomPlannerController {
                     nutrientEntity.setFat(Double.parseDouble(nutrientMap.get("fat").replace("g", "")));
                     nutrientEntity.setCarbohydrates(Double.parseDouble(nutrientMap.get("carbs").replace("g", "")));
                     nutrientEntity.setCalories(Double.parseDouble(nutrientMap.get("calories")));
-                    oneDayRecipeEntities.add(recipeEntity);
                     nutrientEntityRepository.save(nutrientEntity);
                     recipeEntity.setNutrientId(nutrientEntity.getId());
                     recipeEntityRepository.save(recipeEntity);
+                    oneDayRecipeEntities.add(recipeEntity);
                 }
                 customDailyMealsEntity.setRecipeEntities(oneDayRecipeEntities);
             }
             if (!day.getIngredients().isEmpty()) {
-                //!!!TODO
+                List<IngredientEntity> oneDayIngredientEntities = new ArrayList<>();
                 for(Ingredient ingredient : day.getIngredients()) {
                     IngredientEntity ingredientEntity = new IngredientEntity();
-                    NutrientEntity nutrientEntity = new NutrientEntity();
+                    NutrientEntity nutrientEntity;
                     ingredientEntity.setId(ingredient.getId());
                     ingredientEntity.setName(ingredient.getName());
                     String ingredientNutrient = nutritionController.getIngredientById(String.valueOf(ingredient.getId()));
-                    getIngredientNutrientsMap(ingredientNutrient);
+                    nutrientEntity = getNutrientEntityForIngredient(ingredientNutrient);
                     System.out.println("wait");
+                    nutrientEntityRepository.save(nutrientEntity);
+                    ingredientEntity.setNutrientId(nutrientEntity.getId());
+                    ingredientEntityRepository.save(ingredientEntity);
+                    oneDayIngredientEntities.add(ingredientEntity);
                 }
-                List<IngredientEntity> oneDayIngredientEntities = new ArrayList<>();
                 customDailyMealsEntity.setIngredientEntities(oneDayIngredientEntities);
             }
             customDailyMealsEntities.add(customDailyMealsEntity);
-            userEntityObject.setCustomDailyMeals(customDailyMealsEntities);
+            customDailyMealsEntity.setTimeStamp(timestamp);
+            customDailyMealsEntityRepository.save(customDailyMealsEntity);
         }
+        userEntityObject.setCustomDailyMeals(customDailyMealsEntities);
+        userRepository.save(userEntityObject);
 
         return ResponseEntity
-            .badRequest()
-            .body(new MessageResponse("Not ready yet"));
+            .accepted()
+            .body(new MessageResponse("Custom meal plan saved for user!"));
     }
 
-    private Map<String, String> getIngredientNutrientsMap(String ingredientNutrient) throws JsonProcessingException, IllegalAccessException {
+    private NutrientEntity getNutrientEntityForIngredient(String ingredientNutrient) throws JsonProcessingException, IllegalAccessException {
         ObjectMapper oMapper = new ObjectMapper();
+        NutrientEntity nutrientEntity = new NutrientEntity();
 
-        //This contains the nutrients needed for nutrientEntity!! !!!TODO need to iterate on it, and get only the Double type values out from it, not the objects
         ArrayList<Map<String, Object>> finalNutrientsMap = new ArrayList<>();
 
         Map<String, String> ingredientInfo = new ObjectMapper().readValue(ingredientNutrient, Map.class);
@@ -141,7 +153,28 @@ public class CustomPlannerController {
             }
         }
 
-        return ingredientInfo;
+        for(Map map : finalNutrientsMap) {
+            System.out.println("wait");
+            if (map.containsValue("Calories")) {
+                String caloriesString = String.valueOf(map.get("amount"));
+                Double caloriesDouble = Double.parseDouble(caloriesString);
+                nutrientEntity.setCalories(caloriesDouble);
+            } else if (map.containsValue("Protein")) {
+                String proteinString = String.valueOf(map.get("amount"));
+                Double proteinDouble = Double.parseDouble(proteinString);
+                nutrientEntity.setProtein(proteinDouble);
+            } else if (map.containsValue("Carbohydrates")) {
+                String carbString = String.valueOf(map.get("amount"));
+                Double carbDouble = Double.parseDouble(carbString);
+                nutrientEntity.setCarbohydrates(carbDouble);
+            } else {
+                String fatString = String.valueOf(map.get("amount"));
+                Double fatDouble = Double.parseDouble(fatString);
+                nutrientEntity.setFat(fatDouble);
+            }
+        }
+
+        return nutrientEntity;
     }
 
 }
