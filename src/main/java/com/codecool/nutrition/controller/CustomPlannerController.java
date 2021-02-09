@@ -108,6 +108,7 @@ public class CustomPlannerController {
             }
             customDailyMealsEntities.add(customDailyMealsEntity);
             customDailyMealsEntity.setTimeStamp(timestamp);
+            customDailyMealsEntity.setUserId(userEntityObject.getId());
             customDailyMealsEntityRepository.save(customDailyMealsEntity);
         }
         userEntityObject.setCustomDailyMeals(customDailyMealsEntities);
@@ -118,7 +119,7 @@ public class CustomPlannerController {
             .body(new MessageResponse("Custom meal plan saved for user!"));
     }
 
-    private NutrientEntity getNutrientEntityForIngredient(String ingredientNutrient) throws JsonProcessingException, IllegalAccessException {
+    private NutrientEntity getNutrientEntityForIngredient(String ingredientNutrient) throws JsonProcessingException {
         ObjectMapper oMapper = new ObjectMapper();
         NutrientEntity nutrientEntity = new NutrientEntity();
 
