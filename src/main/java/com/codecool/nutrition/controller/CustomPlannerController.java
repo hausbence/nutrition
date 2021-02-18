@@ -98,7 +98,6 @@ public class CustomPlannerController {
                     ingredientEntity.setName(ingredient.getName());
                     String ingredientNutrient = nutritionController.getIngredientById(String.valueOf(ingredient.getId()));
                     nutrientEntity = getNutrientEntityForIngredient(ingredientNutrient);
-                    System.out.println("wait");
                     nutrientEntityRepository.save(nutrientEntity);
                     ingredientEntity.setNutrientId(nutrientEntity.getId());
                     ingredientEntityRepository.save(ingredientEntity);
@@ -148,14 +147,12 @@ public class CustomPlannerController {
                                 finalNutrientsMap.add(nutrientMap);
                             }
                         }
-                        System.out.println(nutrientEntry);
                     }
                 }
             }
         }
 
         for(Map map : finalNutrientsMap) {
-            System.out.println("wait");
             if (map.containsValue("Calories")) {
                 String caloriesString = String.valueOf(map.get("amount"));
                 Double caloriesDouble = Double.parseDouble(caloriesString);

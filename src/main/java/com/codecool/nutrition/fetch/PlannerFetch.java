@@ -11,6 +11,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
 
@@ -83,7 +84,7 @@ public class PlannerFetch {
         }
     }
 
-    public JsonObject getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) throws UnirestException {
+    public String getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) throws UnirestException {
         System.out.println("========");
         System.out.println(targetCalories);
         System.out.println(diet);
@@ -98,13 +99,11 @@ public class PlannerFetch {
         HttpResponse<JsonNode> response = Unirest.get(host)
             .asJson();
 
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(response.getBody().toString());
-        JsonObject responseObject = je.getAsJsonObject();
 
-        System.out.println("RESPONSE:   " + responseObject);
-
-        return responseObject;
+        return gson.toJson(je);
     }
 
     public String getValidatedPlannerGeneratorUrl(String timeFrame, String diet, String targetCalories, List<String> excludes) {

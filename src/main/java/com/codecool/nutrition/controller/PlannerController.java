@@ -14,7 +14,6 @@ import com.codecool.nutrition.repository.UserRepository;
 import com.codecool.nutrition.request.PlannerConnectRequest;
 import com.codecool.nutrition.request.WeeklyPlanRequest;
 import com.codecool.nutrition.response.MessageResponse;
-import com.google.gson.JsonObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +70,7 @@ public class PlannerController {
     }
 
     @GetMapping("/planner/plan/generate")
-    public JsonObject getGeneratedMealPlan(@RequestParam(defaultValue = "empty") String targetCalories,
+    public String getGeneratedMealPlan(@RequestParam(defaultValue = "empty") String targetCalories,
                                            @RequestParam(defaultValue = "empty") String diet,
                                            @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
 
