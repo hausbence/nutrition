@@ -61,6 +61,14 @@ public class CustomPlannerController {
                 .body(new MessageResponse("Error: User not connected to plannerApi!"));
         }
 
+        saveCustomPlan(customPlanRequest, userEntityObject);
+
+        return ResponseEntity
+            .accepted()
+            .body(new MessageResponse("Custom meal plan saved for user!"));
+    }
+
+    private void saveCustomPlan(@RequestBody CustomPlanRequest customPlanRequest, UserEntity userEntityObject) throws UnirestException, JsonProcessingException {
         List<CustomDay> days = customPlanRequest.getDays();
         Date date = new Date();
         Timestamp timestamp = new Timestamp(date.getTime());
@@ -112,10 +120,6 @@ public class CustomPlannerController {
         }
         userEntityObject.setCustomDailyMeals(customDailyMealsEntities);
         userRepository.save(userEntityObject);
-
-        return ResponseEntity
-            .accepted()
-            .body(new MessageResponse("Custom meal plan saved for user!"));
     }
 
     private NutrientEntity getNutrientEntityForIngredient(String ingredientNutrient) throws JsonProcessingException {

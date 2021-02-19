@@ -89,6 +89,14 @@ public class PlannerController {
                 .body(new MessageResponse("Error: User not connected to plannerApi!"));
         }
 
+        savePlan(weeklyPlanRequest, userEntityObject);
+
+        return ResponseEntity
+            .accepted()
+            .body(new MessageResponse("Meal plan saved for user!"));
+    }
+
+    private void savePlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest, UserEntity userEntityObject) {
         List<Day> days = weeklyPlanRequest.getDays();
         Date date = new Date();
         List<DailyMealsEntity> dailyMealsEntities = new ArrayList<>();
@@ -127,10 +135,6 @@ public class PlannerController {
 
         userEntityObject.setDailyMeals(dailyMealsEntities);
         userRepository.save(userEntityObject);
-
-        return ResponseEntity
-            .accepted()
-            .body(new MessageResponse("Meal plan saved for user!"));
     }
 
 }
