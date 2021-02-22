@@ -14,7 +14,6 @@ import com.codecool.nutrition.repository.UserRepository;
 import com.codecool.nutrition.request.PlannerConnectRequest;
 import com.codecool.nutrition.request.WeeklyPlanRequest;
 import com.codecool.nutrition.response.MessageResponse;
-import com.google.gson.JsonObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,14 +70,14 @@ public class PlannerController {
     }
 
     @GetMapping("/planner/plan/generate")
-    public JsonObject getGeneratedMealPlan(@RequestParam(defaultValue = "empty") String targetCalories,
+    public String getGeneratedMealPlan(@RequestParam(defaultValue = "empty") String targetCalories,
                                            @RequestParam(defaultValue = "empty") String diet,
                                            @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
 
         return plannerFetch.getGeneratedMealPlan(targetCalories, diet, excludes);
     }
 
-    @PostMapping("/planner/plan/save")
+    @PostMapping("/planner/plan/generated/save")
     public ResponseEntity<?> saveGeneratedMealPlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest) {
         UserEntity userEntityObject;
 
@@ -90,6 +89,14 @@ public class PlannerController {
                 .body(new MessageResponse("Error: User not connected to plannerApi!"));
         }
 
+        savePlan(weeklyPlanRequest, userEntityObject);
+
+        return ResponseEntity
+            .accepted()
+            .body(new MessageResponse("Meal plan saved for user!"));
+    }
+
+    private void savePlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest, UserEntity userEntityObject) {
         List<Day> days = weeklyPlanRequest.getDays();
         Date date = new Date();
         List<DailyMealsEntity> dailyMealsEntities = new ArrayList<>();
@@ -128,10 +135,6 @@ public class PlannerController {
 
         userEntityObject.setDailyMeals(dailyMealsEntities);
         userRepository.save(userEntityObject);
-
-        return ResponseEntity
-            .accepted()
-            .body(new MessageResponse("Meal plan saved for user!"));
     }
 
 }

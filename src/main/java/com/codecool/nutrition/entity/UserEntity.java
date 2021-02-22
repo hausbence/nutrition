@@ -1,5 +1,6 @@
 package com.codecool.nutrition.entity;
 
+import com.codecool.nutrition.entity.customPlans.CustomDailyMealsEntity;
 import com.codecool.nutrition.model.Meal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,12 @@ public class UserEntity {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "dailymeals_id"))
     private List<DailyMealsEntity> dailyMeals = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_custom_dailymeals",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "custom_dailymeals_id"))
+    private List<CustomDailyMealsEntity> CustomDailyMeals = new ArrayList<>();
 
     public UserEntity(String username, String email, String password) {
         this.name = username;
