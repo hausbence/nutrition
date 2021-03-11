@@ -1,6 +1,7 @@
 package com.codecool.nutrition.controller;
 
 import com.codecool.nutrition.fetch.NutritionFetch;
+import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,11 @@ public class NutritionController {
     @GetMapping("/recipe/nutrition/{id}")
     public String getRecipeNutrientById(@PathVariable("id") String id) throws UnirestException {
         return nutritionFetch.getRecipeNutrientById(id);
+    }
+
+    @GetMapping("/recipesBulk/{id}")
+    public String getRecipesByIds(@PathVariable("id") String id) throws UnirestException {
+        return nutritionFetch.getRecipesByIds(id);
     }
 
     @GetMapping("/ingredients/{search}")
