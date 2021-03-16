@@ -19,7 +19,7 @@ public class NutritionFetch {
     @Value("${ingredient.url}")
     private String ingredientsBaseUrl;
 
-    private String recipeLimit = "number=10";
+    private String recipeLimit = "number=12";
     private final String apiKey = getApiKey();
 
     public String getRecipeById(String id) throws UnirestException {
