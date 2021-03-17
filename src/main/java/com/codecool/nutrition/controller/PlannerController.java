@@ -1,15 +1,10 @@
 package com.codecool.nutrition.controller;
 
-import com.codecool.nutrition.entity.DailyMealsEntity;
-import com.codecool.nutrition.entity.MealEntity;
-import com.codecool.nutrition.entity.NutrientEntity;
 import com.codecool.nutrition.fetch.PlannerFetch;
 import com.codecool.nutrition.entity.UserEntity;
-import com.codecool.nutrition.model.Day;
-import com.codecool.nutrition.model.Meal;
-import com.codecool.nutrition.repository.DailyMealsEntityRepository;
-import com.codecool.nutrition.repository.MealEntityRepository;
 import com.codecool.nutrition.repository.NutrientEntityRepository;
+import com.codecool.nutrition.response.GeneratedMealPlanResponse;
+import com.codecool.nutrition.repository.DailyMealsEntityRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.codecool.nutrition.request.PlannerConnectRequest;
 import com.codecool.nutrition.request.WeeklyPlanRequest;
@@ -21,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -35,9 +29,6 @@ public class PlannerController {
 
     @Autowired
     DailyMealsEntityRepository dailyMealsEntityRepository;
-
-    @Autowired
-    MealEntityRepository mealEntityRepository;
 
     @Autowired
     NutrientEntityRepository nutrientEntityRepository;
@@ -70,11 +61,11 @@ public class PlannerController {
     }
 
     @GetMapping("/planner/plan/generate")
-    public String getGeneratedMealPlan(@RequestParam(defaultValue = "empty") String targetCalories,
-                                           @RequestParam(defaultValue = "empty") String diet,
-                                           @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
+    public String getGeneratedMealPlanFromApi(@RequestParam(defaultValue = "empty") String targetCalories,
+                                              @RequestParam(defaultValue = "empty") String diet,
+                                              @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
 
-        return plannerFetch.getGeneratedMealPlan(targetCalories, diet, excludes);
+        return plannerFetch.getGeneratedMealPlanFromApi(targetCalories, diet, excludes);
     }
 
     @PostMapping("/planner/plan/generated/save")
@@ -89,52 +80,35 @@ public class PlannerController {
                 .body(new MessageResponse("Error: User not connected to plannerApi!"));
         }
 
-        savePlan(weeklyPlanRequest, userEntityObject);
+        plannerFetch.saveGeneratedPlan(weeklyPlanRequest, userEntityObject);
 
         return ResponseEntity
             .accepted()
             .body(new MessageResponse("Meal plan saved for user!"));
     }
 
-    private void savePlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest, UserEntity userEntityObject) {
-        List<Day> days = weeklyPlanRequest.getDays();
-        Date date = new Date();
-        List<DailyMealsEntity> dailyMealsEntities = new ArrayList<>();
-
-        for (Day day: days) {
-            DailyMealsEntity dailyMealsEntity = new DailyMealsEntity();
-            List<MealEntity> oneDayMealEntities = new ArrayList<>();
-            NutrientEntity nutrientEntity = new NutrientEntity();
-
-            for (Meal meal : day.getMeals()) {
-                MealEntity mealEntity = new MealEntity();
-                mealEntity.setSourceUrl(meal.getSourceUrl());
-                mealEntity.setTitle(meal.getTitle());
-                mealEntity.setReadyInMinutes(meal.getReadyInMinutes());
-                mealEntity.setId(meal.getId());
-                mealEntity.setServings(meal.getServings());
-                mealEntityRepository.save(mealEntity);
-                oneDayMealEntities.add(mealEntity);
-            }
-
-            nutrientEntity.setProtein(day.getNutrients().getProtein());
-            nutrientEntity.setCalories(day.getNutrients().getCalories());
-            nutrientEntity.setCarbohydrates(day.getNutrients().getCarbohydrates());
-            nutrientEntity.setFat(day.getNutrients().getFat());
-            nutrientEntityRepository.save(nutrientEntity);
-
-            Timestamp timestamp = new Timestamp(date.getTime());
-
-            dailyMealsEntity.setMealEntities(oneDayMealEntities);
-            dailyMealsEntity.setTimeStamp(timestamp);
-            dailyMealsEntity.setNutrientId(nutrientEntity.getId());
-            dailyMealsEntity.setUserId(userEntityObject.getId());
-            dailyMealsEntityRepository.save(dailyMealsEntity);
-            dailyMealsEntities.add(dailyMealsEntity);
+    @GetMapping("/plan/generated/{userId}")
+    public GeneratedMealPlanResponse getGeneratedMealPlanByUserId(@PathVariable("userId") Long userId) {
+        GeneratedMealPlanResponse generatedMealPlanResponse = new GeneratedMealPlanResponse();
+        Optional<UserEntity> userEntityObject = userRepository.findById(userId);
+        if (userEntityObject.isPresent()) {
+            generatedMealPlanResponse.setDays(userEntityObject.get().getDailyMeals());
+            generatedMealPlanResponse.setUsername(userEntityObject.get().getName());
+        } else {
+            throw new IllegalArgumentException("There is no user with this ID!");
         }
 
-        userEntityObject.setDailyMeals(dailyMealsEntities);
-        userRepository.save(userEntityObject);
+        return generatedMealPlanResponse;
+    }
+
+    @GetMapping("/plan/dailymeals/nutrient/{nutrientId}")
+    public Optional<?> getNutrientForDailyMealsById(@PathVariable("nutrientId") Long nutrientId) {
+        Optional<?> nutrientEntity = nutrientEntityRepository.findById(nutrientId);
+        if (nutrientEntity.isPresent()) {
+            return nutrientEntity;
+        }else {
+            throw new IllegalArgumentException("There is no nutrient object with that ID!");
+        }
     }
 
 }

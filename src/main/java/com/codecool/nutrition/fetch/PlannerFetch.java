@@ -1,17 +1,22 @@
 package com.codecool.nutrition.fetch;
 
 import com.codecool.nutrition.controller.NutritionController;
+import com.codecool.nutrition.entity.DailyMealsEntity;
+import com.codecool.nutrition.entity.MealEntity;
 import com.codecool.nutrition.entity.NutrientEntity;
 import com.codecool.nutrition.entity.UserEntity;
 //import com.codecool.nutrition.repository.PlannerRepository;
 import com.codecool.nutrition.entity.customPlans.CustomDailyMealsEntity;
 import com.codecool.nutrition.entity.customPlans.IngredientEntity;
 import com.codecool.nutrition.entity.customPlans.RecipeEntity;
+import com.codecool.nutrition.model.Day;
+import com.codecool.nutrition.model.Meal;
 import com.codecool.nutrition.model.customModels.CustomDay;
 import com.codecool.nutrition.model.customModels.Ingredient;
 import com.codecool.nutrition.model.customModels.Recipe;
 import com.codecool.nutrition.repository.*;
 import com.codecool.nutrition.request.CustomPlanRequest;
+import com.codecool.nutrition.request.WeeklyPlanRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
@@ -26,6 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.*;
 
 public class PlannerFetch {
@@ -47,6 +53,12 @@ public class PlannerFetch {
 
     @Autowired
     CustomDailyMealsEntityRepository customDailyMealsEntityRepository;
+
+    @Autowired
+    MealEntityRepository mealEntityRepository;
+
+    @Autowired
+    DailyMealsEntityRepository dailyMealsEntityRepository;
 
     @Value("${plannerconnect.url}")
     private String connectUrl;
@@ -109,7 +121,7 @@ public class PlannerFetch {
         }
     }
 
-    public String getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) throws UnirestException {
+    public String getGeneratedMealPlanFromApi(String targetCalories, String diet, List<String> excludes) throws UnirestException {
         System.out.println("========");
         System.out.println(targetCalories);
         System.out.println(diet);
@@ -284,6 +296,49 @@ public class PlannerFetch {
         }
 
         return nutrientEntity;
+    }
+
+    public void saveGeneratedPlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest, UserEntity userEntityObject) {
+        List<Day> days = weeklyPlanRequest.getDays();
+        Date date = new Date();
+        List<DailyMealsEntity> dailyMealsEntities = new ArrayList<>();
+        int dayIncrement = 0;
+        for (Day day: days) {
+            DailyMealsEntity dailyMealsEntity = new DailyMealsEntity();
+            List<MealEntity> oneDayMealEntities = new ArrayList<>();
+            NutrientEntity nutrientEntity = new NutrientEntity();
+
+            for (Meal meal : day.getMeals()) {
+                MealEntity mealEntity = new MealEntity();
+                mealEntity.setSourceUrl(meal.getSourceUrl());
+                mealEntity.setTitle(meal.getTitle());
+                mealEntity.setReadyInMinutes(meal.getReadyInMinutes());
+                mealEntity.setId(meal.getId());
+                mealEntity.setServings(meal.getServings());
+                mealEntityRepository.save(mealEntity);
+                oneDayMealEntities.add(mealEntity);
+            }
+
+            nutrientEntity.setProtein(day.getNutrients().getProtein());
+            nutrientEntity.setCalories(day.getNutrients().getCalories());
+            nutrientEntity.setCarbohydrates(day.getNutrients().getCarbohydrates());
+            nutrientEntity.setFat(day.getNutrients().getFat());
+            nutrientEntityRepository.save(nutrientEntity);
+
+            Timestamp timestamp = new Timestamp(date.getTime());
+
+            dailyMealsEntity.setMealEntities(oneDayMealEntities);
+            dailyMealsEntity.setDate(LocalDate.from(timestamp.toLocalDateTime().plusDays(dayIncrement)));
+            dailyMealsEntity.setNutrientId(nutrientEntity.getId());
+            dailyMealsEntity.setUserId(userEntityObject.getId());
+            dailyMealsEntityRepository.save(dailyMealsEntity);
+            dailyMealsEntities.add(dailyMealsEntity);
+
+            dayIncrement++;
+        }
+
+        userEntityObject.setDailyMeals(dailyMealsEntities);
+        userRepository.save(userEntityObject);
     }
 
     private String getApiKey() {
