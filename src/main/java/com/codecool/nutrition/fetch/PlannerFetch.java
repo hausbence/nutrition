@@ -120,7 +120,7 @@ public class PlannerFetch {
         }
     }
 
-    public String getGeneratedMealPlan(String targetCalories, String diet, List<String> excludes) throws UnirestException {
+    public String getGeneratedMealPlanFromApi(String targetCalories, String diet, List<String> excludes) throws UnirestException {
         System.out.println("========");
         System.out.println(targetCalories);
         System.out.println(diet);

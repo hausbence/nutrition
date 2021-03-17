@@ -1,15 +1,11 @@
 package com.codecool.nutrition.controller;
 
 import com.codecool.nutrition.entity.DailyMealsEntity;
-import com.codecool.nutrition.entity.MealEntity;
-import com.codecool.nutrition.entity.NutrientEntity;
 import com.codecool.nutrition.fetch.PlannerFetch;
 import com.codecool.nutrition.entity.UserEntity;
-import com.codecool.nutrition.model.Day;
+import com.codecool.nutrition.response.GeneratedMealPlanResponse;
 import com.codecool.nutrition.model.Meal;
 import com.codecool.nutrition.repository.DailyMealsEntityRepository;
-import com.codecool.nutrition.repository.MealEntityRepository;
-import com.codecool.nutrition.repository.NutrientEntityRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.codecool.nutrition.request.PlannerConnectRequest;
 import com.codecool.nutrition.request.WeeklyPlanRequest;
@@ -21,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -64,11 +59,11 @@ public class PlannerController {
     }
 
     @GetMapping("/planner/plan/generate")
-    public String getGeneratedMealPlan(@RequestParam(defaultValue = "empty") String targetCalories,
-                                           @RequestParam(defaultValue = "empty") String diet,
-                                           @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
+    public String getGeneratedMealPlanFromApi(@RequestParam(defaultValue = "empty") String targetCalories,
+                                              @RequestParam(defaultValue = "empty") String diet,
+                                              @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
 
-        return plannerFetch.getGeneratedMealPlan(targetCalories, diet, excludes);
+        return plannerFetch.getGeneratedMealPlanFromApi(targetCalories, diet, excludes);
     }
 
     @PostMapping("/planner/plan/generated/save")
@@ -88,6 +83,20 @@ public class PlannerController {
         return ResponseEntity
             .accepted()
             .body(new MessageResponse("Meal plan saved for user!"));
+    }
+
+    @GetMapping("/{userId}/plan/generated")
+    public GeneratedMealPlanResponse getGeneratedMealPlanByUserId(@PathVariable("userId") Long userId) {
+        GeneratedMealPlanResponse generatedMealPlanResponse = new GeneratedMealPlanResponse();
+        Optional<UserEntity> userEntityObject = userRepository.findById(userId);
+        if (userEntityObject.isPresent()) {
+            generatedMealPlanResponse.setDays(userEntityObject.get().getDailyMeals());
+            generatedMealPlanResponse.setUsername(userEntityObject.get().getName());
+        } else {
+            throw new IllegalArgumentException("There is no user with this ID!");
+        }
+
+        return generatedMealPlanResponse;
     }
 
 }
