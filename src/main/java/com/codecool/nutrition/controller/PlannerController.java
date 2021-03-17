@@ -73,8 +73,8 @@ public class PlannerController {
     public ResponseEntity<?> saveGeneratedMealPlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest) {
         UserEntity userEntityObject;
 
-        if (userRepository.existsByPlannerUsername(weeklyPlanRequest.getPlannerUserName())) {
-            userEntityObject = userRepository.findByPlannerUsername(weeklyPlanRequest.getPlannerUserName());
+        if (userRepository.existsByName(weeklyPlanRequest.getUsername())) {
+            userEntityObject = userRepository.findByName(weeklyPlanRequest.getUsername());
         } else {
             return ResponseEntity
                 .badRequest()
