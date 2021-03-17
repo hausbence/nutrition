@@ -31,6 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.*;
 
 public class PlannerFetch {
@@ -301,7 +302,7 @@ public class PlannerFetch {
         List<Day> days = weeklyPlanRequest.getDays();
         Date date = new Date();
         List<DailyMealsEntity> dailyMealsEntities = new ArrayList<>();
-
+        int dayIncrement = 0;
         for (Day day: days) {
             DailyMealsEntity dailyMealsEntity = new DailyMealsEntity();
             List<MealEntity> oneDayMealEntities = new ArrayList<>();
@@ -327,11 +328,13 @@ public class PlannerFetch {
             Timestamp timestamp = new Timestamp(date.getTime());
 
             dailyMealsEntity.setMealEntities(oneDayMealEntities);
-            dailyMealsEntity.setTimeStamp(timestamp);
+            dailyMealsEntity.setDate(LocalDate.from(timestamp.toLocalDateTime().plusDays(dayIncrement)));
             dailyMealsEntity.setNutrientId(nutrientEntity.getId());
             dailyMealsEntity.setUserId(userEntityObject.getId());
             dailyMealsEntityRepository.save(dailyMealsEntity);
             dailyMealsEntities.add(dailyMealsEntity);
+
+            dayIncrement++;
         }
 
         userEntityObject.setDailyMeals(dailyMealsEntities);

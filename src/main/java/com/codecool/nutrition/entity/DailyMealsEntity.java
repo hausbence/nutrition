@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,8 +36,7 @@ public class DailyMealsEntity {
     @Column(name = "user_id")
     private Long userId;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "creationDate")
-    private Date timeStamp;
+    @Column(name = "dailymeals_date_day")
+    private LocalDate date;
 
 }
