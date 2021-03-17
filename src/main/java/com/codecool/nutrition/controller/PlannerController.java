@@ -37,6 +37,7 @@ public class PlannerController {
     PasswordEncoder encoder;
 
     @PostMapping("/planner/connect")
+    @CrossOrigin
     public ResponseEntity<?> connectUserToPlanner(@Valid @RequestBody PlannerConnectRequest plannerConnectRequest) throws UnirestException {
         String username = plannerConnectRequest.getUsername();
         UserEntity userEntityObject = userRepository.findByName(username);
