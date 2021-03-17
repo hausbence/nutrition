@@ -1,10 +1,9 @@
 package com.codecool.nutrition.controller;
 
-import com.codecool.nutrition.entity.DailyMealsEntity;
 import com.codecool.nutrition.fetch.PlannerFetch;
 import com.codecool.nutrition.entity.UserEntity;
+import com.codecool.nutrition.repository.NutrientEntityRepository;
 import com.codecool.nutrition.response.GeneratedMealPlanResponse;
-import com.codecool.nutrition.model.Meal;
 import com.codecool.nutrition.repository.DailyMealsEntityRepository;
 import com.codecool.nutrition.repository.UserRepository;
 import com.codecool.nutrition.request.PlannerConnectRequest;
@@ -30,6 +29,9 @@ public class PlannerController {
 
     @Autowired
     DailyMealsEntityRepository dailyMealsEntityRepository;
+
+    @Autowired
+    NutrientEntityRepository nutrientEntityRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -85,7 +87,7 @@ public class PlannerController {
             .body(new MessageResponse("Meal plan saved for user!"));
     }
 
-    @GetMapping("/{userId}/plan/generated")
+    @GetMapping("/plan/generated/{userId}")
     public GeneratedMealPlanResponse getGeneratedMealPlanByUserId(@PathVariable("userId") Long userId) {
         GeneratedMealPlanResponse generatedMealPlanResponse = new GeneratedMealPlanResponse();
         Optional<UserEntity> userEntityObject = userRepository.findById(userId);
@@ -97,6 +99,16 @@ public class PlannerController {
         }
 
         return generatedMealPlanResponse;
+    }
+
+    @GetMapping("/plan/dailymeals/nutrient/{nutrientId}")
+    public Optional<?> getNutrientForDailyMealsById(@PathVariable("nutrientId") Long nutrientId) {
+        Optional<?> nutrientEntity = nutrientEntityRepository.findById(nutrientId);
+        if (nutrientEntity.isPresent()) {
+            return nutrientEntity;
+        }else {
+            throw new IllegalArgumentException("There is no nutrient object with that ID!");
+        }
     }
 
 }
