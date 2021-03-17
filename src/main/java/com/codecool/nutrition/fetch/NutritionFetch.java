@@ -19,7 +19,8 @@ public class NutritionFetch {
     @Value("${ingredient.url}")
     private String ingredientsBaseUrl;
 
-    private String recipeLimit = "number=12";
+    private final String recipeLimit = "number=12";
+    private final String ingredientLimit = "number=9";
     private final String apiKey = getApiKey();
 
     public String getRecipeById(String id) throws UnirestException {
@@ -60,8 +61,8 @@ public class NutritionFetch {
 
     public String searchForIngredient(String search) throws UnirestException {
         search = "search?query=" + search;
-        String host = ingredientsBaseUrl + search;
-        return getResponseWithLimit(host);
+        String host = ingredientsBaseUrl + search + "";
+        return getIngredientsWithLimit(host);
     }
 
     public String getIngredientById(String id) throws UnirestException {
@@ -85,6 +86,13 @@ public class NutritionFetch {
 
     private String getResponseWithLimit(String host) throws UnirestException {
         HttpResponse<JsonNode> response = Unirest.get(host + "&" + recipeLimit + "&apiKey=" + apiKey)
+            .asJson();
+
+        return getJson(response);
+    }
+
+    private String getIngredientsWithLimit(String host) throws UnirestException {
+        HttpResponse<JsonNode> response = Unirest.get(host + "&" + ingredientLimit + "&apiKey=" + apiKey)
             .asJson();
 
         return getJson(response);
