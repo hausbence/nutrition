@@ -88,10 +88,10 @@ public class PlannerController {
             .body(new MessageResponse("Meal plan saved for user!"));
     }
 
-    @GetMapping("/plan/generated/{userId}")
-    public GeneratedMealPlanResponse getGeneratedMealPlanByUserId(@PathVariable("userId") Long userId) {
+    @GetMapping("/plan/generated/{username}")
+    public GeneratedMealPlanResponse getGeneratedMealPlanByUserId(@PathVariable("username") String username) {
         GeneratedMealPlanResponse generatedMealPlanResponse = new GeneratedMealPlanResponse();
-        Optional<UserEntity> userEntityObject = userRepository.findById(userId);
+        Optional<UserEntity> userEntityObject = Optional.ofNullable(userRepository.findByName(username));
         if (userEntityObject.isPresent()) {
             generatedMealPlanResponse.setDays(userEntityObject.get().getDailyMeals());
             generatedMealPlanResponse.setUsername(userEntityObject.get().getName());
