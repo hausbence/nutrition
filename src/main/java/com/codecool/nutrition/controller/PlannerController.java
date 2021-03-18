@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
+@CrossOrigin
 public class PlannerController {
 
     @Autowired
@@ -62,6 +63,7 @@ public class PlannerController {
     }
 
     @GetMapping("/planner/plan/generate")
+    @CrossOrigin
     public String getGeneratedMealPlanFromApi(@RequestParam(defaultValue = "empty") String targetCalories,
                                               @RequestParam(defaultValue = "empty") String diet,
                                               @RequestParam(defaultValue = "empty") List<String> excludes) throws UnirestException {
@@ -70,6 +72,7 @@ public class PlannerController {
     }
 
     @PostMapping("/planner/plan/generated/save")
+    @CrossOrigin
     public ResponseEntity<?> saveGeneratedMealPlan(@RequestBody WeeklyPlanRequest weeklyPlanRequest) {
         UserEntity userEntityObject;
 
@@ -89,6 +92,7 @@ public class PlannerController {
     }
 
     @GetMapping("/plan/generated/{username}")
+    @CrossOrigin
     public GeneratedMealPlanResponse getGeneratedMealPlanByUserId(@PathVariable("username") String username) {
         GeneratedMealPlanResponse generatedMealPlanResponse = new GeneratedMealPlanResponse();
         Optional<UserEntity> userEntityObject = Optional.ofNullable(userRepository.findByName(username));
