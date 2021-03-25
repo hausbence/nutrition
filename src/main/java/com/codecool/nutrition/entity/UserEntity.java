@@ -1,7 +1,6 @@
 package com.codecool.nutrition.entity;
 
 import com.codecool.nutrition.entity.customPlans.CustomDailyMealsEntity;
-import com.codecool.nutrition.model.Meal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,11 +36,6 @@ public class UserEntity {
     @Column(columnDefinition = "text")
     private String plannerUserHash;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RoleEntity> roleEntities = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_dailymeals",
