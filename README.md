@@ -21,11 +21,6 @@ If you are done with your plan, create your shopping list for collecting the mat
 
 ![image](./src/main/resources/images/dark.png)
 
-### Currently working on:
-
-- Create custom meal plans
-- Save them in our database
-
 ## Technologies: 
 
 - PostgresSQL
@@ -33,5 +28,7 @@ If you are done with your plan, create your shopping list for collecting the mat
 - Spring Boot Security
 - JWT token
 
-## API
+## API:
 The Api which inspired this website : [SpoonacularAPI](https://spoonacular.com/food-api)
+
+[Check out the deployed version](https://nutri-core.netlify.app)
